@@ -1,0 +1,145 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@theme {
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: #05070d;
+  color: #e2e8f0;
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Scrollbar ───────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
+
+/* ── Animations ──────────────────────────────────────────── */
+@keyframes aura-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes aura-fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+@keyframes aura-scale-in {
+  from { opacity: 0; transform: scale(0.92) translateY(12px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes aura-slide-in-right {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+@keyframes aura-slide-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes aura-pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(34, 211, 238, 0.3); }
+  50% { box-shadow: 0 0 40px rgba(34, 211, 238, 0.6); }
+}
+@keyframes aura-spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes aura-shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+@keyframes aura-flow {
+  0% { stroke-dashoffset: 40; }
+  100% { stroke-dashoffset: 0; }
+}
+@keyframes aura-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+@keyframes aura-bar-grow {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
+@keyframes aura-typing {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+  30% { transform: translateY(-6px); opacity: 1; }
+}
+
+.aura-fade-in { animation: aura-fade-in 0.4s ease-out forwards; }
+.aura-fade-out { animation: aura-fade-out 0.4s ease-out forwards; }
+.aura-scale-in { animation: aura-scale-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.aura-slide-in-right { animation: aura-slide-in-right 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.aura-slide-up { animation: aura-slide-up 0.4s ease-out forwards; }
+.aura-pulse-glow { animation: aura-pulse-glow 2.5s ease-in-out infinite; }
+.aura-spin { animation: aura-spin 1s linear infinite; }
+.aura-blink { animation: aura-blink 1.5s ease-in-out infinite; }
+.aura-bar-grow { animation: aura-bar-grow 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; transform-origin: bottom; }
+
+.aura-shimmer {
+  background: linear-gradient(90deg, #0f172a 25%, #1e293b 50%, #0f172a 75%);
+  background-size: 1000px 100%;
+  animation: aura-shimmer 2s infinite linear;
+}
+
+/* Glass surface */
+.aura-glass {
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+.aura-glass-strong {
+  background: rgba(8, 12, 22, 0.85);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(148, 163, 184, 0.15);
+}
+
+/* Gradient text */
+.aura-gradient-text {
+  background: linear-gradient(135deg, #22d3ee 0%, #3b82f6 50%, #8b5cf6 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Grid background */
+.aura-grid-bg {
+  background-image:
+    linear-gradient(rgba(34, 211, 238, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34, 211, 238, 0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Hide scrollbar utility */
+.aura-no-scrollbar::-webkit-scrollbar { display: none; }
+.aura-no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
