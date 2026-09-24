@@ -228,15 +228,6 @@ export function rand(seed: number): () => number {
   };
 }
 
-export function rand(seed: number): () => number {
-  let s = seed;
-  return () => {
-    s = (s * 9301 + 49297) % 233280;
-    return s / 233280;
-  };
-}
-
-// Make sure 'export' is written here:
 export function rndSeries(seed: number, count: number, base: number, variance: number): SeriesPoint[] {
   const r = rand(seed);
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -246,4 +237,3 @@ export function rndSeries(seed: number, count: number, base: number, variance: n
     return { x, y };
   });
 }
-
