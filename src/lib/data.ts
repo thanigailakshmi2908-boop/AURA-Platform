@@ -237,3 +237,6 @@ export function rndSeries(seed: number, count: number, base: number, variance: n
     return { x, y };
   });
 }
+
+// Export alias to satisfy OverviewView.tsx which imports 'makeSeries'
+export const makeSeries = rndSeries;
