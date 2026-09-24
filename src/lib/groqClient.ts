@@ -7,8 +7,8 @@ export async function callGroqAI(prompt: string, systemContext?: string): Promis
     throw new Error('Groq API Key is missing. Please go to AI Settings, paste your key, and click Save.');
   }
 
-  const defaultSystemPrompt = `You are AURA, an elite enterprise risk, big data, RAG knowledge, and ML analytics multi-agent system powered by GPT-OSS / Llama 120B reasoning. 
-Provide deep, comprehensive, highly professional, data-backed analytical answers with rigorous technical detail, concrete metrics, clear structure, and deep insights. Avoid shallow answers; give overqualified, thoroughly detailed professional enterprise analyses.`;
+  const defaultSystemPrompt = `You are AURA, an elite enterprise risk, big data, RAG knowledge, and ML analytics multi-agent system. 
+Provide deep, comprehensive, highly professional, data-backed analytical answers with rigorous technical detail, concrete metrics, clear structure, and deep insights.`;
 
   try {
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
@@ -18,13 +18,13 @@ Provide deep, comprehensive, highly professional, data-backed analytical answers
         'Authorization': `Bearer ${apiKey}`
       },
       body: JSON.stringify({
-        model: 'llama-3.3-70b-versatile', // High-performance Groq model endpoint
+        model: 'llama-3.1-8b-instant', // Universal stable Groq model endpoint
         messages: [
           { role: 'system', content: systemContext || defaultSystemPrompt },
           { role: 'user', content: prompt }
         ],
         temperature: 0.3,
-        max_tokens: 3500
+        max_tokens: 3000
       })
     });
 
@@ -39,4 +39,3 @@ Provide deep, comprehensive, highly professional, data-backed analytical answers
     throw new Error(error.message || 'Failed to connect to Groq cloud API.');
   }
 }
-
