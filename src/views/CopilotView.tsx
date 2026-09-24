@@ -1,10 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
 import {
-  Send, Sparkles, TrendingUp, AlertTriangle, Lightbulb, FileText,
-  Brain, Search, ShieldCheck, BarChart3, CheckCircle2, User, Cpu
+  Send, Sparkles, TrendingUp, AlertTriangle, Lightbulb,
+  Brain, Search, BarChart3, CheckCircle2, User, Cpu
 } from 'lucide-react';
-import { Card, Badge, Button, LineChart, BarChart, TypingIndicator } from '../components/ui';
-import { COPILOT_EXAMPLES, makeSeries } from '../lib/data';
+import { Card, Badge, Button, TypingIndicator } from '../components/ui';
+import { COPILOT_EXAMPLES } from '../lib/data';
 import { callGroqAI } from '../lib/groqClient';
 
 interface Message {
@@ -12,7 +12,6 @@ interface Message {
   role: 'user' | 'assistant';
   content: string;
   steps?: { agent: string; icon: string; status: 'done' | 'running' }[];
-  charts?: { type: 'line' | 'bar'; data: any; title: string }[];
   rootCause?: string[];
   prediction?: string;
   recommendations?: string[];
@@ -36,20 +35,30 @@ export function CopilotView() {
     setThinking(true);
 
     try {
-      const systemContext = `You are AURA, an elite enterprise risk, big data, RAG knowledge, and ML analytics multi-agent orchestrator powered by Groq. 
-When answering questions, provide deep, comprehensive, highly professional, data-backed analytical breakdowns. Include concrete metrics, structural analysis, and thorough insights.`;
+      const systemContext = `You are AURA, an elite enterprise big data analytics multi-agent system. 
+Provide clear, structured, professional answers. 
+IMPORTANT FORMATTING RULES:
+- Do NOT output raw HTML tags like <br> or markdown table pipes like '|'.
+- Use clean line breaks, bullet points, and concise headings.
+- Separate core insights from technical metrics clearly.`;
       
       const aiReplyText = await callGroqAI(text, systemContext);
+
+      // Clean up any stray markdown or html artifacts from the response
+      const cleanedContent = aiReplyText
+        .replace(/<br\s*[\/]?>/gi, '\n')
+        .replace(/\|/g, ' ')
+        .replace(/#{1,6}\s?/g, ''); 
 
       const assistantMsg: Message = {
         id: Date.now() + 'a',
         role: 'assistant',
-        content: aiReplyText,
+        content: cleanedContent,
         steps: [
           { agent: 'Orchestrator Routing', icon: 'Cpu', status: 'done' },
           { agent: 'Vector RAG Query', icon: 'Search', status: 'done' },
           { agent: 'Big Data Pipeline Analysis', icon: 'BarChart3', status: 'done' },
-          { agent: 'Groq 120B Synthesizer', icon: 'Sparkles', status: 'done' }
+          { agent: 'GPT-OSS 120B Synthesizer', icon: 'Sparkles', status: 'done' }
         ],
         rootCause: [
           'High-throughput vector indexing verified via live cluster nodes.',
@@ -69,7 +78,7 @@ When answering questions, provide deep, comprehensive, highly professional, data
         {
           id: Date.now() + 'err',
           role: 'assistant',
-          content: `❌ **Analysis Error:** ${error.message || 'Please check your Groq API key in AI Settings.'}`
+          content: `Analysis Error: ${error.message || 'Please check your Groq API key in AI Settings.'}`
         }
       ]);
     } finally {
@@ -87,11 +96,11 @@ When answering questions, provide deep, comprehensive, highly professional, data
           </div>
           <div>
             <h1 className="text-base font-bold text-slate-100">Ask Your Data</h1>
-            <p className="text-xs text-slate-400">Natural-language deep analytics powered by Groq 9-agent orchestration</p>
+            <p className="text-xs text-slate-400">Natural-language deep analytics powered by GPT-OSS 120B orchestration</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Badge color="cyan"><Cpu size={10} /> Groq GPT-OSS Connected</Badge>
+          <Badge color="cyan"><Cpu size={10} /> GPT-OSS 120B Connected</Badge>
           <Badge color="green">Online</Badge>
         </div>
       </div>
@@ -174,14 +183,14 @@ function MessageBubble({ msg }: { msg: Message }) {
       </div>
       <div className="flex-1 space-y-4">
         {msg.steps && (
-          <Card className="p-4 bg-slate-900/60">
+          <Card className="p-4 bg-slate-900/60 border-slate-800">
             <div className="flex items-center gap-2 mb-3">
               <Cpu size={14} className="text-cyan-400" />
-              <span className="text-xs font-semibold text-slate-300">Multi-Agent Workflow Execution</span>
+              <span className="text-xs font-semibold text-slate-300 uppercase tracking-wider">Multi-Agent Workflow Execution</span>
             </div>
             <div className="flex flex-wrap gap-2">
               {msg.steps.map((s, i) => (
-                <div key={i} className="flex items-center gap-1.5 aura-glass rounded-lg px-2.5 py-1.5">
+                <div key={i} className="flex items-center gap-1.5 aura-glass rounded-lg px-2.5 py-1.5 border border-slate-800">
                   <CheckCircle2 size={12} className="text-cyan-400" />
                   <span className="text-xs text-slate-300">{s.agent}</span>
                 </div>
@@ -194,7 +203,7 @@ function MessageBubble({ msg }: { msg: Message }) {
           <Card className="p-4 border-amber-500/20 bg-amber-950/10">
             <div className="flex items-center gap-2 mb-3">
               <AlertTriangle size={14} className="text-amber-400" />
-              <span className="text-xs font-semibold text-slate-300">Data Diagnostic Findings</span>
+              <span className="text-xs font-semibold text-amber-300 uppercase tracking-wider">Data Diagnostic Findings</span>
             </div>
             <div className="space-y-2">
               {msg.rootCause.map((r, i) => (
@@ -207,15 +216,19 @@ function MessageBubble({ msg }: { msg: Message }) {
           </Card>
         )}
 
-        <div className="aura-glass rounded-2xl rounded-tl-sm px-5 py-4 border-slate-800">
-          <p className="text-sm text-slate-200 leading-relaxed whitespace-pre-wrap">{msg.content}</p>
+        {/* Main Clean AI Content Card */}
+        <div className="aura-glass rounded-2xl rounded-tl-sm px-6 py-5 border-slate-800/80 shadow-xl">
+          <div className="text-xs font-bold text-cyan-400 uppercase tracking-wider mb-2">AI Deep Analysis Output</div>
+          <div className="text-sm text-slate-200 leading-relaxed whitespace-pre-wrap font-sans">
+            {msg.content}
+          </div>
         </div>
 
         {msg.prediction && (
           <Card className="p-4 border-cyan-500/20 bg-cyan-950/10">
             <div className="flex items-center gap-2 mb-2">
               <TrendingUp size={14} className="text-cyan-400" />
-              <span className="text-xs font-semibold text-slate-300">Predictive Analytics Forecast</span>
+              <span className="text-xs font-semibold text-cyan-300 uppercase tracking-wider">Predictive Analytics Forecast</span>
             </div>
             <p className="text-sm text-slate-300">{msg.prediction}</p>
           </Card>
@@ -225,7 +238,7 @@ function MessageBubble({ msg }: { msg: Message }) {
           <Card className="p-4 border-emerald-500/20 bg-emerald-950/10">
             <div className="flex items-center gap-2 mb-3">
               <Lightbulb size={14} className="text-emerald-400" />
-              <span className="text-xs font-semibold text-slate-300">Strategic Recommendations</span>
+              <span className="text-xs font-semibold text-emerald-300 uppercase tracking-wider">Strategic Recommendations</span>
             </div>
             <div className="space-y-2">
               {msg.recommendations.map((r, i) => (
@@ -248,10 +261,10 @@ function ThinkingBubble() {
       <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 text-white shadow-lg shadow-cyan-500/20">
         <Sparkles size={16} />
       </div>
-      <Card className="p-4">
+      <Card className="p-4 border-slate-800">
         <div className="flex items-center gap-3">
           <TypingIndicator />
-          <span className="text-xs text-slate-400">Groq multi-agent orchestrator processing deep big-data analysis...</span>
+          <span className="text-xs text-slate-400">GPT-OSS 120B orchestrator processing deep synthesis...</span>
         </div>
       </Card>
     </div>
