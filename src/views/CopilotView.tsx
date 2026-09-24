@@ -36,24 +36,14 @@ export function CopilotView() {
 
     try {
       const systemContext = `You are AURA, an elite enterprise big data analytics multi-agent system. 
-Provide clear, structured, professional answers. 
-IMPORTANT FORMATTING RULES:
-- Do NOT output raw HTML tags like <br> or markdown table pipes like '|'.
-- Use clean line breaks, bullet points, and concise headings.
-- Separate core insights from technical metrics clearly.`;
+Provide clear, structured, professional answers. Use clear section headers starting with **Heading Name** followed by the answer text.`;
       
       const aiReplyText = await callGroqAI(text, systemContext);
-
-      // Clean up any stray markdown or html artifacts from the response
-      const cleanedContent = aiReplyText
-        .replace(/<br\s*[\/]?>/gi, '\n')
-        .replace(/\|/g, ' ')
-        .replace(/#{1,6}\s?/g, ''); 
 
       const assistantMsg: Message = {
         id: Date.now() + 'a',
         role: 'assistant',
-        content: cleanedContent,
+        content: aiReplyText,
         steps: [
           { agent: 'Orchestrator Routing', icon: 'Cpu', status: 'done' },
           { agent: 'Vector RAG Query', icon: 'Search', status: 'done' },
@@ -176,6 +166,46 @@ function MessageBubble({ msg }: { msg: Message }) {
     );
   }
 
+  // Helper parser to split markdown text into clean separate heading & answer blocks like ChatGPT
+  const renderFormattedContent = (rawText: string) => {
+    // Split text by lines or double line breaks to detect headers wrapped in **
+    const parts = rawText.split(/\n\n+/);
+    return parts.map((part, index) => {
+      let cleanPart = part.trim();
+      if (!cleanPart) return null;
+
+      // Check if part is a header (e.g., **Global Sales Rate**)
+      const isHeader = cleanPart.startsWith('**') && cleanPart.includes('**');
+      if (isHeader) {
+        const firstClosing = cleanPart.indexOf('**', 2);
+        if (firstClosing !== -1) {
+          const headingText = cleanPart.substring(2, firstClosing);
+          const bodyText = cleanPart.substring(firstClosing + 2).trim();
+          return (
+            <div key={index} className="my-3 p-3 rounded-xl bg-slate-900/80 border border-cyan-500/30">
+              <div className="text-xs font-bold text-cyan-400 uppercase tracking-wider mb-1 flex items-center gap-2">
+                <span className="h-1.5 w-1.5 rounded-full bg-cyan-400"></span>
+                {headingText.replace(/\*\*/g, '')}
+              </div>
+              {bodyText && (
+                <div className="text-sm text-slate-200 leading-relaxed mt-1">
+                  {bodyText.replace(/\*\*/g, '')}
+                </div>
+              )}
+            </div>
+          );
+        }
+      }
+
+      // Regular paragraph block with markdown asterisks cleaned out
+      return (
+        <div key={index} className="my-2 text-sm text-slate-200 leading-relaxed">
+          {cleanPart.replace(/\*\*/g, '')}
+        </div>
+      );
+    });
+  };
+
   return (
     <div className="flex gap-3 aura-slide-up">
       <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 text-white shadow-lg shadow-cyan-500/20">
@@ -216,11 +246,14 @@ function MessageBubble({ msg }: { msg: Message }) {
           </Card>
         )}
 
-        {/* Main Clean AI Content Card */}
-        <div className="aura-glass rounded-2xl rounded-tl-sm px-6 py-5 border-slate-800/80 shadow-xl">
-          <div className="text-xs font-bold text-cyan-400 uppercase tracking-wider mb-2">AI Deep Analysis Output</div>
-          <div className="text-sm text-slate-200 leading-relaxed whitespace-pre-wrap font-sans">
-            {msg.content}
+        {/* Main Clean ChatGPT-Style AI Output Card */}
+        <div className="aura-glass rounded-2xl rounded-tl-sm px-6 py-5 border-slate-800/80 shadow-xl space-y-3">
+          <div className="text-xs font-bold text-cyan-400 uppercase tracking-wider pb-2 border-b border-slate-800 flex items-center justify-between">
+            <span>AI Deep Analysis Output</span>
+            <span className="text-[10px] text-slate-500 font-mono">GPT-OSS 120B</span>
+          </div>
+          <div className="space-y-2">
+            {renderFormattedContent(msg.content)}
           </div>
         </div>
 
