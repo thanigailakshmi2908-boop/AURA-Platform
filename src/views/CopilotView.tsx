@@ -4,7 +4,7 @@ import {
   Brain, Search, ShieldCheck, BarChart3, CheckCircle2, User, Cpu
 } from 'lucide-react';
 import { Card, Badge, Button, LineChart, BarChart, TypingIndicator } from '../components/ui';
-import { COPILOT_EXAMPLES, makeSeries } from '@lib/data';
+import { COPILOT_EXAMPLES, makeSeries } from '../lib/data';
 import { callGroqAI } from '../lib/groqClient';
 
 interface Message {
@@ -36,7 +36,6 @@ export function CopilotView() {
     setThinking(true);
 
     try {
-      // Prompt engineered to pull deep enterprise data analysis from Groq
       const systemContext = `You are AURA, an elite enterprise risk, big data, RAG knowledge, and ML analytics multi-agent orchestrator powered by Groq. 
 When answering questions, provide deep, comprehensive, highly professional, data-backed analytical breakdowns. Include concrete metrics, structural analysis, and thorough insights.`;
       
@@ -174,7 +173,6 @@ function MessageBubble({ msg }: { msg: Message }) {
         <Sparkles size={16} />
       </div>
       <div className="flex-1 space-y-4">
-        {/* Agent steps */}
         {msg.steps && (
           <Card className="p-4 bg-slate-900/60">
             <div className="flex items-center gap-2 mb-3">
@@ -192,7 +190,6 @@ function MessageBubble({ msg }: { msg: Message }) {
           </Card>
         )}
 
-        {/* Root cause */}
         {msg.rootCause && (
           <Card className="p-4 border-amber-500/20 bg-amber-950/10">
             <div className="flex items-center gap-2 mb-3">
@@ -210,12 +207,10 @@ function MessageBubble({ msg }: { msg: Message }) {
           </Card>
         )}
 
-        {/* Text content */}
         <div className="aura-glass rounded-2xl rounded-tl-sm px-5 py-4 border-slate-800">
           <p className="text-sm text-slate-200 leading-relaxed whitespace-pre-wrap">{msg.content}</p>
         </div>
 
-        {/* Prediction */}
         {msg.prediction && (
           <Card className="p-4 border-cyan-500/20 bg-cyan-950/10">
             <div className="flex items-center gap-2 mb-2">
@@ -226,7 +221,6 @@ function MessageBubble({ msg }: { msg: Message }) {
           </Card>
         )}
 
-        {/* Recommendations */}
         {msg.recommendations && (
           <Card className="p-4 border-emerald-500/20 bg-emerald-950/10">
             <div className="flex items-center gap-2 mb-3">
