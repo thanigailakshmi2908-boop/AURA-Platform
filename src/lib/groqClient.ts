@@ -7,7 +7,7 @@ export async function callGroqAI(prompt: string, systemContext?: string): Promis
     throw new Error('Groq API Key is missing. Please go to AI Settings, paste your key, and click Save.');
   }
 
-  const defaultSystemPrompt = `You are AURA, an elite enterprise risk, big data, RAG knowledge, and ML analytics multi-agent system. 
+  const defaultSystemPrompt = `You are AURA, an elite enterprise risk, big data, RAG knowledge, and ML analytics multi-agent orchestrator powered by GPT-OSS 120B. 
 Provide deep, comprehensive, highly professional, data-backed analytical answers with rigorous technical detail, concrete metrics, clear structure, and deep insights.`;
 
   try {
@@ -18,13 +18,13 @@ Provide deep, comprehensive, highly professional, data-backed analytical answers
         'Authorization': `Bearer ${apiKey}`
       },
       body: JSON.stringify({
-        model: 'llama-3.1-8b-instant', // Universal stable Groq model endpoint
+        model: 'openai/gpt-oss-120b', // Configured to your requested GPT-OSS 120B model
         messages: [
           { role: 'system', content: systemContext || defaultSystemPrompt },
           { role: 'user', content: prompt }
         ],
         temperature: 0.3,
-        max_tokens: 3000
+        max_tokens: 3500
       })
     });
 
