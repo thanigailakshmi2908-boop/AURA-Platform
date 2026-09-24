@@ -3,12 +3,11 @@ import {
   Settings, Key, Eye, EyeOff, DollarSign, Zap, Cpu, CheckCircle2,
   TrendingUp, Coins, BookOpen, ExternalLink
 } from 'lucide-react';
-import { Card, CardHeader, Badge, Button, Toggle, ProgressBar, Drawer } from '../components/ui';
+import { Card, CardHeader, Badge, Button, Toggle, ProgressBar } from '../components/ui';
 import { GEMINI_MODELS, type GeminiModel } from '../lib/data';
 
 export function SettingsView() {
   const [models, setModels] = useState<GeminiModel[]>(GEMINI_MODELS);
-  const [drawerOpen, setDrawerOpen] = useState(false);
 
   // Initialize state from localStorage groq keys
   const [apiKey, setApiKey] = useState(
@@ -33,8 +32,6 @@ export function SettingsView() {
     setTimeout(() => setSavedKey(false), 2500);
   };
 
-  const active = models.find(m => m.active) || models[0];
-
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -42,8 +39,35 @@ export function SettingsView() {
           <h1 className="text-xl font-bold text-slate-100">AI Settings & Groq Engine</h1>
           <p className="text-sm text-slate-400 mt-1">Configure your Groq API credentials, GPT-OSS model routing, and cost optimization.</p>
         </div>
-        <Button onClick={() => setDrawerOpen(true)} icon={Key}>Manage Groq API Key</Button>
       </div>
+
+      {/* DIRECT API KEY INPUT CARD (No drawer needed, works instantly on mobile) */}
+      <Card className="p-5 border-cyan-500/30 bg-cyan-950/10">
+        <div className="flex items-center gap-2 mb-2">
+          <Key size={18} className="text-cyan-400" />
+          <h3 className="text-sm font-semibold text-slate-200">Groq API Key Management</h3>
+        </div>
+        <p className="text-xs text-slate-400 mb-4">Paste your Groq API key below to power the Copilot chat, RAG analysis, and pipelines.</p>
+        
+        <div className="flex flex-col sm:flex-row items-center gap-3">
+          <div className="flex items-center gap-2 aura-glass rounded-lg p-2 w-full flex-1 border border-slate-700">
+            <input
+              type={showKey ? 'text' : 'password'}
+              value={apiKey}
+              onChange={(e) => setApiKey(e.target.value)}
+              placeholder="gsk_..."
+              className="flex-1 bg-transparent text-sm text-slate-200 placeholder-slate-600 outline-none px-2 py-1"
+            />
+            <button onClick={() => setShowKey(!showKey)} className="text-slate-400 hover:text-slate-200 p-1">
+              {showKey ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
+          <Button size="sm" onClick={saveKey} icon={CheckCircle2} className="w-full sm:w-auto px-6 py-2.5">
+            {savedKey ? 'Saved Successfully!' : 'Save Groq Key'}
+          </Button>
+        </div>
+        <p className="text-[11px] text-slate-500 mt-2">Keys are stored securely in browser local storage and never exposed in client code.</p>
+      </Card>
 
       {/* Cost stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -117,7 +141,7 @@ export function SettingsView() {
             { step: '2', title: 'Navigate to API Keys', desc: 'Click on "API Keys" in the left sidebar menu.' },
             { step: '3', title: 'Create a New API Key', desc: 'Click the "Create API Key" button and label your key.' },
             { step: '4', title: 'Copy Your Key', desc: 'Copy your secret key string (usually starts with gsk_).' },
-            { step: '5', title: 'Paste It Into AURA', desc: 'Open the "Manage Groq API Key" drawer above, paste your key, and click Save.' },
+            { step: '5', title: 'Paste It Into AURA', desc: 'Paste your key into the management box above and click Save.' },
           ].map((s) => (
             <div key={s.step} className="flex items-start gap-3 aura-glass rounded-xl p-4">
               <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-cyan-500/10 text-cyan-400">
@@ -131,32 +155,6 @@ export function SettingsView() {
           ))}
         </div>
       </Card>
-
-      {/* API Key Drawer */}
-      <Drawer isOpen={drawerOpen} onClose={() => setDrawerOpen(false)} title="Groq API Key Management" width="sm">
-        <div className="space-y-5">
-          <div className="text-xs text-slate-400 mb-2">Groq API Key</div>
-          <div className="flex items-center gap-2 aura-glass rounded-lg p-2">
-            <Key size={18} className="text-cyan-400 ml-2" />
-            <input
-              type={showKey ? 'text' : 'password'}
-              value={apiKey}
-              onChange={(e) => setApiKey(e.target.value)}
-              placeholder="gsk_..."
-              className="flex-1 bg-transparent text-sm text-slate-200 placeholder-slate-600 outline-none py-1.5"
-            />
-            <button onClick={() => setShowKey(!showKey)} className="text-slate-500 hover:text-slate-300 p-1">
-              {showKey ? <EyeOff size={16} /> : <Eye size={16} />}
-            </button>
-          </div>
-          <div className="mt-3">
-            <Button size="sm" onClick={saveKey} icon={CheckCircle2}>
-              {savedKey ? 'Saved!' : 'Save Groq Key'}
-            </Button>
-          </div>
-          <p className="text-[11px] text-slate-600 mt-2">Keys are encrypted at rest with AES-256. Never exposed in client code.</p>
-        </div>
-      </Drawer>
     </div>
   );
 }
