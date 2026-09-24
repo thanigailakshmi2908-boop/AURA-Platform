@@ -82,7 +82,7 @@ export function SettingsView() {
                 </div>
                 <div>
                   <h3 className="text-sm font-bold text-slate-100">{m.name}</h3>
-                  <Badge color={m.cyan ? 'cyan' : 'slate'} size="sm">{m.tier}</Badge>
+                  <Badge color={m.color === 'cyan' ? 'cyan' : 'slate'} size="sm">{m.tier}</Badge>
                 </div>
               </div>
               {m.active && <CheckCircle2 size={18} className="text-cyan-400" />}
